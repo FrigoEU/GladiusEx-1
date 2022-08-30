@@ -1,4 +1,4 @@
-﻿local L = LibStub("AceLocale-3.0"):NewLocale("GladiusEx", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("GladiusEx", "enUS", true)
 
 -- Cooldowns module
 L["cat:pvp_trinket"] = "PvP Trinket"
@@ -287,7 +287,7 @@ L["Enable all"] = true
 L["Enable module"] = true
 L["Enemy spec: %s (%s/%s)"] = true
 L["Enlarge mine"] = true
-L["Enlarge mine"] = true
+L["Enlarge dispellable"] = true
 L["Ordering"] = true
 L["Higher prio first"] = true
 L["Show buffs with a higher priority level at the beginning"] = true
@@ -503,6 +503,8 @@ L["Show incoming heals"] = true
 L["Show only dispellable"] = true
 L["Show only mine"] = true
 L["Show party frames"] = true
+L["Show party frames outside arena"] = true
+L["Toggle to show your party frames outside arena instances"] = true
 L["Show arena frames"] = true
 L["Toggle to show your arena frames"] = true
 L["Show spark"] = true
@@ -589,6 +591,7 @@ L["Toggle if the icon borders should be cropped or not"] = true
 L["Toggle if the icons should show the spell tooltip when hovered"] = true
 L["Toggle if you want the cast bar to be part of the frame or if you want to position it freely"] = true
 L["Toggle if your auras should be enlarged"] = true
+L["Toggle if dispellable auras should be enlarged"] = true
 L["Toggle low health alerts"] = true
 L["Toggle remaining time instead of cast time"] = true
 L["Toggle the cast bar shield icon for not interruptible spells"] = true

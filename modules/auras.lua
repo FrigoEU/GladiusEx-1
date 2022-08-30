@@ -39,6 +39,7 @@ local defaults = {
 	aurasBuffsMaxRows = 2,
 	aurasBuffsSize = 12,
 	aurasBuffsEnlargeMine = true,
+	aurasBuffsEnlargeDispellable = false,
 	aurasBuffsEnlargeScale = 2,
 	aurasBuffsOffsetX = 0,
 	aurasBuffsOffsetY = 0,
@@ -56,6 +57,7 @@ local defaults = {
 	aurasDebuffsMaxRows = 2,
 	aurasDebuffsSize = 12,
 	aurasDebuffsEnlargeMine = true,
+	aurasDebuffsEnlargeDispellable = true,
 	aurasDebuffsEnlargeScale = 2,
 	aurasDebuffsOffsetX = 0,
 	aurasDebuffsOffsetY = 0,
@@ -201,6 +203,7 @@ function Auras:UpdateUnitAuras(event, unit)
 	local aurasBuffsSpacingX
 	local aurasBuffsSpacingY
 	local aurasBuffsEnlargeMine
+	local aurasBuffsEnlargeDispellable
 	local aurasBuffsEnlargeScale
 	local showSwipe
 	local swipeReversed
@@ -287,6 +290,8 @@ function Auras:UpdateUnitAuras(event, unit)
 
 				if aurasBuffsEnlargeMine and ((testing and i <= 2) or (not testing and player_units[caster])) then
 					tinsert(enlarged, i)
+				elseif aurasBuffsEnlargeDispellable and ((testing and i <= 2) or (not testing and CanDispel(unit, buffs, dispelType, spellID))) then 
+					tinsert(enlarged, i)
 				else
 					tinsert(normal, i)
 				end
@@ -327,8 +332,12 @@ function Auras:UpdateUnitAuras(event, unit)
 			tsort(normal, aura_compare)
 		end
 
-		local area_width = 36 * aurasBuffsPerRow + aurasBuffsSpacingX * (aurasBuffsPerRow - 1)
-		local area_height = 36 * ceil(aurasBuffsMax / aurasBuffsPerRow) + (aurasBuffsSpacingY * (ceil(aurasBuffsMax / aurasBuffsPerRow) - 1))
+		-- single row: make area allow for all enlarged buffs
+		local scalemultiplier = (aurasBuffsMax == aurasBuffsPerRow) and aurasBuffsEnlargeScale or 1
+		-- local multiplier = 1
+
+		local area_width = 36 * aurasBuffsPerRow * scalemultiplier + aurasBuffsSpacingX * (aurasBuffsPerRow - 1)
+		local area_height = 36 * ceil(aurasBuffsMax / aurasBuffsPerRow) * scalemultiplier + (aurasBuffsSpacingY * (ceil(aurasBuffsMax / aurasBuffsPerRow) - 1))
 		local spacing_x = aurasBuffsSpacingX
 		local spacing_y = aurasBuffsSpacingY
 		local squares = {}
@@ -472,6 +481,7 @@ function Auras:UpdateUnitAuras(event, unit)
 		aurasBuffsSpacingX = self.db[unit].aurasBuffsSpacingX
 		aurasBuffsSpacingY = self.db[unit].aurasBuffsSpacingY
 		aurasBuffsEnlargeMine = self.db[unit].aurasBuffsEnlargeMine
+		aurasBuffsEnlargeDispellable = self.db[unit].aurasBuffsEnlargeDispellable
 		aurasBuffsEnlargeScale = self.db[unit].aurasBuffsEnlargeScale
 		aurasBuffsOnlyMine = GladiusEx:IsPartyUnit(unit) and self.db[unit].aurasBuffsOnlyMine
 		aurasBuffsOnlyDispellable = GladiusEx:IsArenaUnit(unit) and self.db[unit].aurasBuffsOnlyDispellable
@@ -495,6 +505,7 @@ function Auras:UpdateUnitAuras(event, unit)
 		aurasBuffsSpacingX = self.db[unit].aurasDebuffsSpacingX
 		aurasBuffsSpacingY = self.db[unit].aurasDebuffsSpacingY
 		aurasBuffsEnlargeMine = self.db[unit].aurasDebuffsEnlargeMine
+		aurasBuffsEnlargeDispellable = self.db[unit].aurasDebuffsEnlargeDispellable
 		aurasBuffsEnlargeScale = self.db[unit].aurasDebuffsEnlargeScale
 		aurasBuffsOnlyMine = GladiusEx:IsArenaUnit(unit) and self.db[unit].aurasDebuffsOnlyMine
 		aurasBuffsOnlyDispellable = GladiusEx:IsPartyUnit(unit) and self.db[unit].aurasDebuffsOnlyDispellable
@@ -786,13 +797,20 @@ function Auras:GetOptions(unit)
 							disabled = function() return not self.db[unit].aurasBuffs or not self:IsUnitEnabled(unit) end,
 							order = 6,
 						},
+						aurasBuffsEnlargeDispellable = {
+							type = "toggle",
+							name = L["Enlarge dispellable"],
+							desc = L["Toggle if dispellable auras should be enlarged"],
+							disabled = function() return not self.db[unit].aurasBuffs or not self:IsUnitEnabled(unit) end,
+							order = 7,
+						},
 						aurasBuffsEnlargeScale = {
 							type = "range",
 							name = L["Enlarged scale"],
 							desc = L["Scale of the enlarged auras"],
 							min = 1, max = 3, bigStep = 0.05, isPercent = true,
-							disabled = function() return not self.db[unit].aurasBuffsEnlargeMine or not self.db[unit].aurasBuffs or not self:IsUnitEnabled(unit) end,
-							order = 7,
+							disabled = function() return not ((self.db[unit].aurasBuffsEnlargeMine or self.db[unit].aurasBuffsEnlargeDispellable) and self.db[unit].aurasBuffs and self:IsUnitEnabled(unit)) end,
+							order = 8,
 						},
 						sep = {
 							type = "description",
@@ -1038,13 +1056,20 @@ function Auras:GetOptions(unit)
 							disabled = function() return not self.db[unit].aurasDebuffs or not self:IsUnitEnabled(unit) end,
 							order = 6,
 						},
+						aurasDebuffsEnlargeDispellable = {
+							type = "toggle",
+							name = L["Enlarge dispellable"],
+							desc = L["Toggle if dispellable auras should be enlarged"],
+							disabled = function() return not self.db[unit].aurasDebuffs or not self:IsUnitEnabled(unit) end,
+							order = 7,
+						},
 						aurasDebuffsEnlargeScale = {
 							type = "range",
 							name = L["Enlarged scale"],
 							desc = L["Scale of the enlarged auras"],
 							min = 1, max = 3, bigStep = 0.05, isPercent = true,
-							disabled = function() return not self.db[unit].aurasDebuffsEnlargeMine or not self.db[unit].aurasDebuffs or not self:IsUnitEnabled(unit) end,
-							order = 7,
+							disabled = function() return not ((self.db[unit].aurasDebuffsEnlargeMine or self.db[unit].aurasDebuffsEnlargeDispellable) and self.db[unit].aurasDebuffs and self:IsUnitEnabled(unit)) end,
+							order = 8,
 						},
 						sep = {
 							type = "description",

@@ -466,7 +466,7 @@ function GladiusEx:GetArenaSize(min)
 	end
 
 	-- try to guess the current arena size
-	local guess = max(min or 0, 2, GetNumArenaOpponents(), GetNumArenaOpponentSpecs and GetNumArenaOpponentSpecs() or 0, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME), GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE))
+	local guess = max(min or 0, 1, GetNumArenaOpponents(), GetNumArenaOpponentSpecs and GetNumArenaOpponentSpecs() or 0, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME), GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE))
 
 	log("GetArenaSize", min, GetNumArenaOpponents(), GetNumArenaOpponentSpecs and GetNumArenaOpponentSpecs() or 0, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME), GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE),
 		" => ", guess)
@@ -528,12 +528,18 @@ function GladiusEx:UpdateArenaFrames()
 
 	self:UpdateAnchor("arena")
 
+	local inArena = select(2, IsInInstance()) == "arena"
+
 	for i = 1, 5 do
 		local unit = "arena" .. i
 		if numOpps >= i then
 			self:UpdateUnit(unit)
 			self:UpdateUnitState(unit, self.buttons[unit].unit_state == STATE_STEALTH)
 			self:ShowUnit(unit)
+
+			if not self:IsTesting() and not UnitExists(unit) and not inArena then
+				self:HideUnit(unit)
+			end
 
 			-- test environment
 			if self:IsTesting(unit) then
@@ -662,7 +668,15 @@ function GladiusEx:PLAYER_ENTERING_WORLD()
 	else
 		self:CheckFirstRun()
 
-		if not self:IsTesting() then
+		if self:IsTesting() then
+			-- nothing
+		elseif self.db.base.showPartyOutsideArena then
+			if self:IsPartyShown() then
+		        self:UpdateFrames()
+			else 
+				self:ShowFrames()
+			end
+		else 
 			self:HideFrames()
 		end
 		if logging then log("DISABLE LOGGING") end
