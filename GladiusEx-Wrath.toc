@@ -1,4 +1,4 @@
-﻿## Interface: 100000
+﻿## Interface: 30400
 ## Title: GladiusEx
 ## Notes: Arena unit frames and more
 ## SavedVariables: GladiusExDB
@@ -6,12 +6,14 @@
 ## X-Curse-Project-ID: 45973
 ## X-Wago-ID: 2jK8q5Gy
 
-embeds.xml
+
+
+embeds-wrath.xml
 templates.xml
 localization\enUS.lua
 localization\locales.lua
 GladiusEx.lua
-Data-Mainline.lua
+Data-Wrath.lua
 options.lua
 modules\alerts.lua
 modules\announcements.lua

@@ -262,7 +262,15 @@ function DRTracker:CreateFrame(unit)
 	if not button then return end
 
 	-- create frame
-	self.frame[unit] = CreateFrame("Frame", "GladiusEx" .. self:GetName() .. "Frame" .. unit, button, "ActionButtonTemplate")
+	-- TODO make my own CheckButton/ActionButtonTemplate
+	self.frame[unit] = CreateFrame("CheckButton", "GladiusEx" .. self:GetName() .. "Frame" .. unit, button, "ActionButtonTemplate")
+	self.frame[unit].NormalTexture:Hide()
+	if self.frame[unit].HighlightTexture then
+		self.frame[unit].HighlightTexture:Hide()
+	end
+	if self.frame[unit].SlotBackground then
+		self.frame[unit].SlotBackground:Hide()
+	end
 end
 
 function DRTracker:Update(unit)
@@ -644,7 +652,7 @@ function DRTracker:GetOptions(unit)
 		local spellid_by_idx = {}
 		for spellid, _ in DRData:IterateSpellsByCategory(key) do
 			local spellname, _, spellicon = GetSpellInfo(spellid)
-			if not seen_icons[spellicon] then
+			if spellicon and not seen_icons[spellicon] then
 				spellid_by_idx[idx] = spellid
 				seen_icons[spellicon] = true
 				table.insert(

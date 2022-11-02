@@ -46,6 +46,10 @@ if GladiusEx.IS_RETAIL then
   function IsValidSpecId(specID)
     return specID and specID > 0
   end
+
+  function GetArenaOpponentSpecInfo(id)
+    return GetArenaOpponentSpec(id)
+  end
 else
   function CountArenaOpponents()
     return 3 -- ???? TBC
@@ -53,6 +57,10 @@ else
 
   function IsValidSpecId(specID)
     return true
+  end
+
+  function GetArenaOpponentSpecInfo(id)
+    return nil
   end
 
   -- TODO TBC spec detection
@@ -387,9 +395,6 @@ function GladiusEx:OnEnable()
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("UNIT_PET", "UpdateUnitGUID")
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE", "UpdateUnitGUID")
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
-	end
 	if LGIST then
 		LGIST.RegisterCallback(self, "GroupInSpecT_Update")
 	end
@@ -694,7 +699,7 @@ function GladiusEx:ARENA_PREP_OPPONENT_SPECIALIZATIONS()
 
 	local numOpps = CountArenaOpponents()
 	for i = 1, numOpps do
-		local specID = GetArenaOpponentSpec(i)
+		local specID = GetArenaOpponentSpecInfo(i)
 		local unitid = "arena" .. i
 
 		if IsValidSpecId(specID) then
@@ -713,7 +718,7 @@ end
 function GladiusEx:CheckOpponentSpecialization(unit)
 	local id = strmatch(unit, "^arena(%d+)$")
 	if id then
-		local specID = GetArenaOpponentSpec(tonumber(id))
+		local specID = GetArenaOpponentSpecInfo(tonumber(id))
 		self:UpdateUnitSpecialization(unit, specID)
 	end
 end
@@ -1040,7 +1045,7 @@ function GladiusEx:CreateUnit(unit)
 	button.secure = CreateFrame("Button", "GladiusExSecureButton" .. unit, button, "SecureActionButtonTemplate")
 	button.secure:SetAllPoints()
 	button.secure:SetAttribute("unit", unit)
-	button.secure:RegisterForClicks("AnyDown")
+	button.secure:RegisterForClicks("AnyDown", "AnyUp")
 	--this should be managed via the Clicks module
 	--button.secure:SetAttribute("*type1", "target")
 	--button.secure:SetAttribute("*type2", "focus")
