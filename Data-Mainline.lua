@@ -44,6 +44,7 @@ function GladiusEx.Data.DefaultClassicon()
 		[320224]				= 10,	-- Podtender
 		[327140]				= 10,	-- Forgeborne Reveries
 		[199545]				= 10,	-- Steed of Glory (P pvp tal)
+		[378464]				= 10,	-- Nullifying Shroud
 
 		[GladiusEx:SafeGetSpellName(5215)]	= 10,	-- Prowl
 		[199483]				= 10,	-- Camouflage
@@ -775,5 +776,21 @@ function GladiusEx.Data.GetSpecializationInfoByID(id)
 end
 
 function GladiusEx.Data.GetNumSpecializationsForClassID(classID)
-  return GetNumSpecializationsForClassID(classID)
+    return GetNumSpecializationsForClassID(classID)
+end
+
+function GladiusEx.Data.GetSpecializationInfoForClassID(classID, specIndex)
+    return GetSpecializationInfoForClassID(classID, specIndex)
+end
+
+function GladiusEx.Data.GetArenaOpponentSpec(id)
+    return GetArenaOpponentSpec(id)
+end
+
+function GladiusEx.Data.CountArenaOpponents()
+    return GetNumArenaOpponentSpecs()
+end
+
+function GladiusEx.Data.GetNumArenaOpponentSpecs()
+    return GetNumArenaOpponentSpecs()
 end
