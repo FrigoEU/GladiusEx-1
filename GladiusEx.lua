@@ -465,7 +465,7 @@ function GladiusEx:GetArenaSize(minVal)
     local guess =
         max(
         minVal or 0,
-        2,
+        1,
         widget_number,
         GetNumArenaOpponents(),
         GladiusEx.Data.GetNumArenaOpponentSpecs() and GladiusEx.Data.GetNumArenaOpponentSpecs() or 0,
