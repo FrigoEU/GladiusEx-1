@@ -547,7 +547,7 @@ function GladiusEx:UpdateArenaFrames()
 			self:UpdateUnitState(unit, self.buttons[unit].unit_state == STATE_STEALTH)
 			self:ShowUnit(unit)
 
-			if not self:IsTesting() and (not UnitExists(unit) or not inArena) then
+			if not self:IsTesting() and not UnitExists(unit) and not inArena then
 				self:HideUnit(unit)
 			end
 
