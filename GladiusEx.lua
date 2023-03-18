@@ -62,14 +62,14 @@ local function log(...)
 		log_frame:EnableMouseWheel(true)
 
 		log_frame:SetSize(500, 500)
-		log_frame:SetFont(STANDARD_TEXT_FONT, 9, "NONE")
+		-- log_frame:SetFont(STANDARD_TEXT_FONT, 9, "NONE")
 		log_frame:SetShadowColor(0, 0, 0, 1)
 		log_frame:SetShadowOffset(1, -1)
 		log_frame:SetFading(false)
 		log_frame:SetJustifyH("LEFT")
 		log_frame:SetIndentedWordWrap(true)
 		log_frame:SetMaxLines(10000)
-		log_frame:SetBackdropColor(1, 1, 1, 0.2)
+		-- log_frame:SetBackdropColor(1, 1, 1, 0.2)
 		log_frame.starttime = GetTime()
 
 		log_frame:SetScale(1)
@@ -461,33 +461,17 @@ function GladiusEx:GetArenaSize(minVal)
         end
     end
 
-    -- try to guess the current arena size
-    local guess =
-        max(
-        minVal or 0,
-        1,
-        widget_number,
-        GetNumArenaOpponents(),
-        GladiusEx.Data.GetNumArenaOpponentSpecs() and GladiusEx.Data.GetNumArenaOpponentSpecs() or 0,
-        GetNumGroupMembers(LE_PARTY_CATEGORY_HOME),
-        GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE)
-    )
-
-    log(
-        "GetArenaSize",
-        minVal,
-        GetNumArenaOpponents(),
-        GladiusEx.Data.GetNumArenaOpponentSpecs() and GladiusEx.Data.GetNumArenaOpponentSpecs() or 0,
-        GetNumGroupMembers(LE_PARTY_CATEGORY_HOME),
-        GetNumGroupMembers(LE_PARTY_CATEGORY_INSTANCE),
-        " => ",
-        guess
-    )
-
-    -- In Retail, Solo Shuffle sometimes returns 4
-    if guess == 4 then
-        guess = 3
+    local guess = 5;
+    local found_guess = false;
+    while not (found_guess) and guess > 1 do
+      if UnitExists("party" .. tostring(guess - 1)) or UnitExists("arena" .. tostring(guess)) then
+        found_guess = true;
+      else
+        guess = guess - 1
+      end
     end
+
+    log("GetArenaSize", guess)
 
     return guess
 end
