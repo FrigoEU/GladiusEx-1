@@ -183,7 +183,7 @@ local function CanDispel(unit, buffs, dispelType, spellID)
 	-- TODO handle the *other* evoker dispels
 	local hasMonkDispel = IsPlayerSpell(115450)
 	local hasEvokerDispel = IsPlayerSpell(360823)
-	local hasShamanDispel = IsPlayerSpell(378773)
+	local hasShamanDispel = IsPlayerSpell(378773) or IsPlayerSpell(370)
 	local hasDispel = hasMonkDispel or hasEvokerDispel or hasShamanDispel
 	if buffs and hasDispel and dispelType == "Magic" then
 		return true
