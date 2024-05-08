@@ -142,8 +142,8 @@ function HealthBar:UpdateHealth(unit, health, maxHealth)
 end
 
 function HealthBar:SetIncomingBarAmount(unit, bar, incamount, inccap)
-	local health = self.frame[unit].health
-	local maxHealth = self.frame[unit].maxHealth
+	local health = self.frame[unit].health or 0
+	local maxHealth = self.frame[unit].maxHealth or 0
 	local barWidth = self.frame[unit]:GetWidth()
 
 
